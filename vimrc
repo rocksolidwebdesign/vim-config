@@ -22,13 +22,13 @@ Plugin 'vim-scripts/YankRing.vim'
 Plugin 'tpope/vim-surround'
 Plugin 'tpope/vim-fugitive' " git happy
 
-" syntax check
+" linting
 Plugin 'vim-syntastic/syntastic'
 
 " filetypes
 Plugin 'pangloss/vim-javascript'
 Plugin 'mxw/vim-jsx'
-Plugin 'elixir-lang/vim-elixir'
+Plugin 'fatih/vim-go'
 
 call vundle#end()
 
@@ -403,22 +403,31 @@ if has('win32')
 endif
 " windows_shell_fix }}}
 
-" Settings
-" plugin_settings {{{
+" Plugin Settings
+" my custom logger {{{
 let g:is_logger=1
-
+" }}}
+" vim-go {{{
+let g:go_fmt_command = "goimports"
+" }}}
+" syntastic {{{
 let g:syntastic_javascript_checkers = ['eslint']
-
+" }}}
+" matchit {{{
 " don't load the matchparen plugin
 let loaded_matchparen = 1
-
+" }}}
+" CTRL-p {{{
 let g:ctrlp_map = "<Leader>p"
-
+" }}}
+" JSX {{{
 let g:jsx_ext_required = 1
-
+" }}}
+" NERDTree {{{
 " prevent annoying warnings from nerdtree
 let g:NERDShutUp = 1
-
+" }}}
+" yankring {{{
 " use a vertical window split
 let g:yankring_window_use_horiz = 0
 
@@ -429,14 +438,17 @@ let g:yankring_min_element_length = 2
 
 " truncate each paste at 50 chars to keep the window width small
 let g:yankring_max_display        = 50
-
-" don't bother to colorize end tags differently
-" based on what type of block is being ended
-" hopefully this means faster loads and better
-" syntax hilite with folds
+" }}}
+" ruby {{{
+"
+"   don't bother to colorize end tags differently
+"   based on what type of block is being ended
+"   hopefully this means faster loads and better
+"   syntax hilite with folds
 let ruby_no_expensive = 1
-" plugin_settings }}}
+" }}}
 
+" Vim Settings
 " cindent {{{
 set cindent
 set cinoptions=
@@ -595,6 +607,9 @@ nmap <LocalLeader>s :call StripWhitespace()<CR>
 nmap <Leader>jsy :call QuickLoggerVar()<CR>
 nmap <Leader>jsl :call QuickLoggerLine()<CR>
 nmap <Leader>jsc :call GetClosure()<CR>
+nmap <F5> :GoInstall<CR>
+vmap <F5> :GoInstall<CR>
+imap <F5> :GoInstall<CR>
 " keymap_plugins }}}
 " keymap_pseudo_compat {{{
 "
