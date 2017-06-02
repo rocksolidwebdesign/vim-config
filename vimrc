@@ -407,8 +407,14 @@ endif
 " my custom logger {{{
 let g:is_logger=1
 " }}}
-" vim-go {{{
+" Golang {{{
 let g:go_fmt_command = "goimports"
+
+let g:go_metalinter_enabled = ['vet', 'golint', 'errcheck']
+
+let g:go_metalinter_autosave_enabled = ['vet', 'golint']
+
+let g:go_metalinter_deadline = "5s"
 " }}}
 " syntastic {{{
 let g:syntastic_javascript_checkers = ['eslint']
@@ -530,10 +536,10 @@ set foldmethod=marker
 set colorcolumn=60
 " options }}}
 " search {{{
-set ignorecase
-set smartcase
+set noignorecase
+"set smartcase
 set incsearch
-set nohlsearch
+set hlsearch
 set nowrap
 set showmatch
 " search }}}
@@ -577,10 +583,18 @@ nmap <LocalLeader>v :edit $MYVIMRC<CR>
 nmap <LocalLeader>o :source $MYVIMRC<CR>
 nmap <LocalLeader>r :source %<CR>
 
+" remove unwanted search highlighting by searching
+" for something that will probably never be found
+nmap <LocalLeader>h /dhj8nb4yipq7<CR>
+
 " open and close the quickfix/searchresults window
 nmap <LocalLeader>f :botright copen<CR>
 nmap <LocalLeader>x :cclose<CR>
-vmap <LocalLeader>, :s/$/,/<CR>
+vmap <LocalLeader>, :s/$/,/<CR>/dhj8nb4yipq7<CR>
+
+" split function params into multiple lines
+nmap <LocalLeader>b /(<CR>malvh%hxi<CR><Esc>==O<C-r>"<Esc>==`a%kA,<Esc>`avi(:s/,\(\s\)\?/,\r/g<CR>`avi(=`avi(V:s/\n\n/\r/g<CR>/dhj8nb4yipq7<CR>
+
 " keymaps }}}
 " keymap_enhancements {{{
 " make indentation easier by default
@@ -595,22 +609,6 @@ vnoremap < <gv
 nnoremap <C-e> j<C-e>
 nnoremap <C-y> k<C-y>
 " keymap_enhancements }}}
-" keymap_plugins {{{
-nmap <LocalLeader>t :TagbarToggle<CR>
-nmap <LocalLeader>n :NERDTreeToggle<CR>
-
-" my plugins
-nmap <LocalLeader>w :call ToggleWrap()<CR>
-nmap <LocalLeader>m :call ToggleMousePaste()<CR>
-nmap <LocalLeader>s :call StripWhitespace()<CR>
-
-nmap <Leader>jsy :call QuickLoggerVar()<CR>
-nmap <Leader>jsl :call QuickLoggerLine()<CR>
-nmap <Leader>jsc :call GetClosure()<CR>
-nmap <F5> :GoInstall<CR>
-vmap <F5> :GoInstall<CR>
-imap <F5> :GoInstall<CR>
-" keymap_plugins }}}
 " keymap_pseudo_compat {{{
 "
 " IMPORTANT: depends on win32_utf8_shim
@@ -637,3 +635,21 @@ nnoremap <M-S> :wa<CR>
 " close
 nnoremap <M-w> :BD<CR>
 " keymap_pseudo_compat }}}
+
+" Plugin Keymaps
+" keymap_plugins {{{
+nmap <LocalLeader>t :TagbarToggle<CR>
+nmap <LocalLeader>n :NERDTreeToggle<CR>
+
+" my plugins
+nmap <LocalLeader>w :call ToggleWrap()<CR>
+nmap <LocalLeader>m :call ToggleMousePaste()<CR>
+nmap <LocalLeader>s :call StripWhitespace()<CR>
+
+nmap <Leader>jsy :call QuickLoggerVar()<CR>
+nmap <Leader>jsl :call QuickLoggerLine()<CR>
+nmap <Leader>jsc :call GetClosure()<CR>
+nmap <F5> :GoInstall<CR>
+vmap <F5> :GoInstall<CR>
+imap <F5> :GoInstall<CR>
+" keymap_plugins }}}
