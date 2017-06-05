@@ -174,9 +174,9 @@ function! GetLoggingStatement(token, label)
 		let line_suffix = ')'
 
 		if strlen(token) > 0 && strlen(label) <= 0
-			let label = '"' . token . '"'
+			let label = '`' . token . '`'
 		elseif  strlen(token) <= 0 && strlen(label) > 0
-			let label = '"' . label . '"'
+			let label = '`' . label . '`'
 		else
 			let label = label
 		endif
@@ -594,6 +594,9 @@ vmap <LocalLeader>, :s/$/,/<CR>/dhj8nb4yipq7<CR>
 
 " split function params into multiple lines
 nmap <LocalLeader>b /(<CR>malvh%hxi<CR><Esc>==O<C-r>"<Esc>==`a%kA,<Esc>`avi(:s/,\(\s\)\?/,\r/g<CR>`avi(=`avi(V:s/\n\n/\r/g<CR>/dhj8nb4yipq7<CR>
+
+" vimgrep for word under cursor
+nmap <LocalLeader>g viwy:vimgrep '<C-r>"' src/**<CR>
 
 " keymaps }}}
 " keymap_enhancements {{{
