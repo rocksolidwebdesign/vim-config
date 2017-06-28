@@ -21,6 +21,7 @@ Plugin 'qpkorr/vim-bufkill'
 Plugin 'vim-scripts/YankRing.vim'
 Plugin 'tpope/vim-surround'
 Plugin 'tpope/vim-fugitive' " git happy
+Plugin 'mileszs/ack.vim'
 
 " linting
 Plugin 'vim-syntastic/syntastic'
@@ -170,7 +171,7 @@ function! GetLoggingStatement(token, label)
 		endif
 
 	elseif syntax_type == 'go'
-		let line_prefix = 'fmt.Println('
+		let line_prefix = 'log.Debug('
 		let line_suffix = ')'
 
 		if strlen(token) > 0 && strlen(label) <= 0
@@ -344,6 +345,31 @@ function! QuickLoggerLine()
 	normal ==
 endfunction
 " logger }}}
+" ack_for_selection {{{
+function! AckForSelection()
+  " escape PCRE regex chars
+  let search_term = substitute(GetVisualSelection(), '\([.*+?()]\)', '\\\1', 'g')
+
+  let dirs = "src tests"
+  let cmd = "Ack '" . search_term . "' " . dirs
+
+  " run the search
+  execute cmd
+
+  " open the search results window
+  botright copen
+endfunction
+
+function! GetVisualSelection()
+  " Why is this not a built-in Vim script function?!
+  let [lnum1, col1] = getpos("'<")[1:2]
+  let [lnum2, col2] = getpos("'>")[1:2]
+  let lines = getline(lnum1, lnum2)
+  let lines[-1] = lines[-1][: col2 - (&selection == 'inclusive' ? 1 : 2)]
+  let lines[0] = lines[0][col1 - 1:]
+  return join(lines, "\n")
+endfunction
+" ack_for_selection }}}
 
 " Shims
 " win32_utf8_shim {{{
@@ -404,6 +430,11 @@ endif
 " windows_shell_fix }}}
 
 " Plugin Settings
+" Ack.vim {{{
+if executable('ag')
+  let g:ackprg = 'ag --vimgrep'
+endif
+" }}}
 " my custom logger {{{
 let g:is_logger=1
 " }}}
@@ -418,6 +449,7 @@ let g:go_metalinter_deadline = "5s"
 " }}}
 " syntastic {{{
 let g:syntastic_javascript_checkers = ['eslint']
+let g:syntastic_javascript_eslint_exec = 'eslint_wrapper'
 " }}}
 " matchit {{{
 " don't load the matchparen plugin
@@ -425,6 +457,7 @@ let loaded_matchparen = 1
 " }}}
 " CTRL-p {{{
 let g:ctrlp_map = "<Leader>p"
+let g:ctrlp_custom_ignore = 'node_modules\|DS_Store\|git\|vendor'
 " }}}
 " JSX {{{
 let g:jsx_ext_required = 1
@@ -570,7 +603,7 @@ execute 'nnoremap <Leader>c :read ' . g:my_vim_folder . '/templates/template.cpp
 " templates }}}
 
 " Keymaps
-" keymaps {{{
+" custom {{{
 let mapleader = " "
 
 " auto insert curly braces on CTRL-f
@@ -596,10 +629,10 @@ vmap <LocalLeader>, :s/$/,/<CR>/dhj8nb4yipq7<CR>
 nmap <LocalLeader>b /(<CR>malvh%hxi<CR><Esc>==O<C-r>"<Esc>==`a%kA,<Esc>`avi(:s/,\(\s\)\?/,\r/g<CR>`avi(=`avi(V:s/\n\n/\r/g<CR>/dhj8nb4yipq7<CR>
 
 " vimgrep for word under cursor
-nmap <LocalLeader>g viwy:vimgrep '<C-r>"' src/**<CR>
-
-" keymaps }}}
-" keymap_enhancements {{{
+nmap <LocalLeader>g viwy:call AckForSelection()<CR>
+vmap <LocalLeader>g :call AckForSelection()<CR>
+" custom }}}
+" enhancements {{{
 " make indentation easier by default
 nnoremap < <<
 nnoremap > >>
@@ -611,8 +644,8 @@ vnoremap < <gv
 " keep cursor on same relative line during in-place scroll
 nnoremap <C-e> j<C-e>
 nnoremap <C-y> k<C-y>
-" keymap_enhancements }}}
-" keymap_pseudo_compat {{{
+" enhancements }}}
+" alt_keys {{{
 "
 " IMPORTANT: depends on win32_utf8_shim
 "
@@ -637,7 +670,7 @@ nnoremap <M-S> :wa<CR>
 
 " close
 nnoremap <M-w> :BD<CR>
-" keymap_pseudo_compat }}}
+" alt_keys }}}
 
 " Plugin Keymaps
 " keymap_plugins {{{
