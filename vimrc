@@ -1,3 +1,4 @@
+set exrc
 set nocompatible
 filetype off
 
@@ -175,15 +176,15 @@ function! GetLoggingStatement(token, label)
 		let line_suffix = ')'
 
 		if strlen(token) > 0 && strlen(label) <= 0
-			let label = '`' . token . '`'
+			let label = '`' . token . ' `'
 		elseif  strlen(token) <= 0 && strlen(label) > 0
-			let label = '`' . label . '`'
+			let label = '`' . label . ' `'
 		else
 			let label = label
 		endif
 
 		if strlen(token) > 0 && strlen(label) > 0
-			let joiner = line_suffix . "\n" . line_prefix
+			let joiner = ', '
 		else
 			let joiner = ''
 		endif
