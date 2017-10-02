@@ -31,17 +31,12 @@ Plugin 'pangloss/vim-javascript'
 Plugin 'mxw/vim-jsx'
 Plugin 'fatih/vim-go'
 Plugin 'majutsushi/tagbar'
+Plugin 'nightsense/carbonized'
 
 call vundle#end()
 
 filetype plugin indent on
 syntax enable
-
-let colorscheme_menu_files = split(globpath('~/.vim/bundle/vim-colorschemes/colors', '*'), '\n')
-for i in range(1,len(colorscheme_menu_files)-1)
-	let scheme_name = fnamemodify(fnamemodify(colorscheme_menu_files[i], ":r"), ":t")
-	exec 'menu Plugin.Colorschemes.' . scheme_name . ' :colorscheme ' . scheme_name . '<CR>'
-endfor
 
 " Functions
 " toggle_fold {{{
@@ -235,7 +230,7 @@ function! GetLoggingStatement(token, label)
 	elseif syntax_type == 'cpp'
 		if g:is_logger
 			let line_prefix = 'LOGGER << '
-			let line_suffix = ' << std::endl;'
+			let line_suffix = ';'
 		else
 			let line_prefix = 'std::cout << '
 			let line_suffix = ' << std::endl;'
@@ -513,11 +508,11 @@ if has('gui_running')
 	"colorscheme visualstudio
 	"set background=light
 
-	colorscheme babymate256
+	colorscheme carbonized-dark
 	"hi Folded guifg=#dddddd guibg=#222222
 else
-	colorscheme babymate256
-	hi Folded guifg=#dddddd guibg=#222222
+	colorscheme carbonized-dark
+	"hi Folded guifg=#dddddd guibg=#222222
 end
 " colors }}}
 " font {{{
@@ -710,5 +705,11 @@ nnoremap / :set hls<CR>/
 "
 " e.g.
 " autocmd VimEnter * normal 3jo5jo2jo
+
+let colorscheme_menu_files = split(globpath('~/.vim/bundle/vim-colorschemes/colors', '*'), '\n')
+for i in range(1,len(colorscheme_menu_files)-1)
+	let scheme_name = fnamemodify(fnamemodify(colorscheme_menu_files[i], ":r"), ":t")
+	exec 'menu Plugin.Colorschemes.' . scheme_name . ' :colorscheme ' . scheme_name . '<CR>'
+endfor
 
 set exrc
