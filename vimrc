@@ -1,4 +1,3 @@
-set exrc
 set nocompatible
 filetype off
 
@@ -31,11 +30,18 @@ Plugin 'vim-syntastic/syntastic'
 Plugin 'pangloss/vim-javascript'
 Plugin 'mxw/vim-jsx'
 Plugin 'fatih/vim-go'
+Plugin 'majutsushi/tagbar'
 
 call vundle#end()
 
 filetype plugin indent on
 syntax enable
+
+let colorscheme_menu_files = split(globpath('~/.vim/bundle/vim-colorschemes/colors', '*'), '\n')
+for i in range(1,len(colorscheme_menu_files)-1)
+	let scheme_name = fnamemodify(fnamemodify(colorscheme_menu_files[i], ":r"), ":t")
+	exec 'menu Plugin.Colorschemes.' . scheme_name . ' :colorscheme ' . scheme_name . '<CR>'
+endfor
 
 " Functions
 " toggle_fold {{{
@@ -172,7 +178,7 @@ function! GetLoggingStatement(token, label)
 		endif
 
 	elseif syntax_type == 'go'
-		let line_prefix = 'log.Debug('
+		let line_prefix = 'applog.Debug('
 		let line_suffix = ')'
 
 		if strlen(token) > 0 && strlen(label) <= 0
@@ -441,6 +447,7 @@ let g:is_logger=1
 " }}}
 " Golang {{{
 let g:go_fmt_command = "goimports"
+"let g:go_fmt_options = "-f " . expand("%:p")
 
 let g:go_metalinter_enabled = ['vet', 'golint', 'errcheck']
 
@@ -458,7 +465,7 @@ let loaded_matchparen = 1
 " }}}
 " CTRL-p {{{
 let g:ctrlp_map = "<Leader>p"
-let g:ctrlp_custom_ignore = 'node_modules\|DS_Store\|git\|vendor'
+let g:ctrlp_custom_ignore = '\.node_modules\|\.DS_Store\|\.git\|vendor'
 " }}}
 " JSX {{{
 let g:jsx_ext_required = 1
@@ -489,6 +496,9 @@ let ruby_no_expensive = 1
 " }}}
 
 " Vim Settings
+" C++ include paths {{{
+set path+=/usr/include/linux,/usr/local/include,/usr/include/c++/5
+" C++ include paths }}}
 " cindent {{{
 set cindent
 set cinoptions=
@@ -503,10 +513,10 @@ if has('gui_running')
 	"colorscheme visualstudio
 	"set background=light
 
-	colorscheme molokai
+	colorscheme babymate256
 	"hi Folded guifg=#dddddd guibg=#222222
 else
-	colorscheme molokai
+	colorscheme babymate256
 	hi Folded guifg=#dddddd guibg=#222222
 end
 " colors }}}
@@ -562,7 +572,8 @@ set number " show line numbers
 set ruler " show column number
 set autoread " auto reload changed files
 set winaltkeys=no " don't trigger menus on alt key
-set guioptions=aegimrLtT
+" set guioptions=aegimrLtT
+"set guioptions=aegimrLtT
 
 " folding
 set foldmethod=marker
@@ -619,12 +630,11 @@ nmap <LocalLeader>r :source %<CR>
 
 " remove unwanted search highlighting by searching
 " for something that will probably never be found
-nmap <LocalLeader>h /dhj8nb4yipq7<CR>
+nmap <LocalLeader>h :set nohlsearch<CR>
 
 " open and close the quickfix/searchresults window
 nmap <LocalLeader>f :botright copen<CR>
 nmap <LocalLeader>x :cclose<CR>
-vmap <LocalLeader>, :s/$/,/<CR>/dhj8nb4yipq7<CR>
 
 " split function params into multiple lines
 nmap <LocalLeader>b /(<CR>malvh%hxi<CR><Esc>==O<C-r>"<Esc>==`a%kA,<Esc>`avi(:s/,\(\s\)\?/,\r/g<CR>`avi(=`avi(V:s/\n\n/\r/g<CR>/dhj8nb4yipq7<CR>
@@ -690,3 +700,15 @@ nmap <F5> :GoInstall<CR>
 vmap <F5> :GoInstall<CR>
 imap <F5> :GoInstall<CR>
 " keymap_plugins }}}
+
+nnoremap / :set hls<CR>/
+
+" open nerdtree when vim starts
+" autocmd VimEnter * NERDTree
+"
+" navigate to a custom folder in nerd tree
+"
+" e.g.
+" autocmd VimEnter * normal 3jo5jo2jo
+
+set exrc
