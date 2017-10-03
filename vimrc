@@ -492,7 +492,7 @@ let ruby_no_expensive = 1
 
 " Vim Settings
 " C++ include paths {{{
-set path+=/usr/include/linux,/usr/local/include,/usr/include/c++/5
+set path+=/usr/include/linux,/usr/include/c++/v1,/usr/include/libcxxabi,/usr/local/include
 " C++ include paths }}}
 " cindent {{{
 set cindent
