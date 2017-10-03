@@ -445,6 +445,9 @@ let g:go_metalinter_deadline = "5s"
 " ale {{{
 let g:ale_lint_on_text_changed = 'never'
 let g:ale_lint_on_insert_leave = 1
+
+" ['go build', 'gofmt', 'golint', 'gometalinter', 'gosimple', 'go vet', 'staticcheck']
+let g:ale_linters = {'c': ['clang'], 'cpp': ['clang'], 'go': ['gofmt', 'go vet', 'go build']}
 " ale }}}
 " syntastic {{{
 "let g:syntastic_javascript_checkers = ['eslint']
