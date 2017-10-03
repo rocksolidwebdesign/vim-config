@@ -13,6 +13,7 @@ Plug 'vim-scripts/YankRing.vim'
 Plug 'tpope/vim-surround'
 Plug 'tpope/vim-fugitive'
 Plug 'mileszs/ack.vim'
+Plug 'SirVer/ultisnips'
 
 " linting
 Plug 'w0rp/ale'
@@ -500,21 +501,13 @@ set cinoptions+=(s
 set cinoptions+=N-s
 " cindent }}}
 " colors {{{
+"hi Folded guifg=#dddddd guibg=#222222
 if has('gui_running')
-	"colorscheme visualstudio
-	"set background=light
-
 	colorscheme OceanicNext
 	set background=dark
-
-	"colorscheme carbonized-dark
-	"hi Folded guifg=#dddddd guibg=#222222
 else
 	colorscheme OceanicNext
 	set background=dark
-
-	"colorscheme carbonized-dark
-	"hi Folded guifg=#dddddd guibg=#222222
 end
 " colors }}}
 " font {{{
@@ -708,10 +701,10 @@ nnoremap / :set hls<CR>/
 " e.g.
 " autocmd VimEnter * normal 3jo5jo2jo
 
-let colorscheme_menu_files = split(globpath('~/.vim/bundle/vim-colorschemes/colors', '*'), '\n')
-for i in range(1,len(colorscheme_menu_files)-1)
-	let scheme_name = fnamemodify(fnamemodify(colorscheme_menu_files[i], ":r"), ":t")
-	exec 'menu Plugin.Colorschemes.' . scheme_name . ' :colorscheme ' . scheme_name . '<CR>'
-endfor
+" let colorscheme_menu_files = split(globpath('~/.vim/plugged/vim-colorschemes/colors', '*'), '\n')
+" for i in range(1,len(colorscheme_menu_files)-1)
+" 	let scheme_name = fnamemodify(fnamemodify(colorscheme_menu_files[i], ":r"), ":t")
+" 	exec 'menu Plugin.Colorschemes.' . scheme_name . ' :colorscheme ' . scheme_name . '<CR>'
+" endfor
 
 set exrc
