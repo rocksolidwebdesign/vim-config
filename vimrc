@@ -1,39 +1,30 @@
-set nocompatible
-filetype off
-
-if has('win32')
-	set rtp+=~/vimfiles/bundle/Vundle.vim
-else
-	set rtp+=~/.vim/bundle/Vundle.vim
-end
-
-call vundle#begin()
+call plug#begin()
 
 " customization
-Plugin 'flazz/vim-colorschemes'
+Plug 'flazz/vim-colorschemes'
 
 " file management
-Plugin 'ctrlpvim/ctrlp.vim'
-Plugin 'scrooloose/nerdtree'
+Plug 'ctrlpvim/ctrlp.vim'
+Plug 'scrooloose/nerdtree'
 
 " extra functionality
-Plugin 'qpkorr/vim-bufkill'
-Plugin 'vim-scripts/YankRing.vim'
-Plugin 'tpope/vim-surround'
-Plugin 'tpope/vim-fugitive' " git happy
-Plugin 'mileszs/ack.vim'
+Plug 'qpkorr/vim-bufkill'
+Plug 'vim-scripts/YankRing.vim'
+Plug 'tpope/vim-surround'
+Plug 'tpope/vim-fugitive'
+Plug 'mileszs/ack.vim'
 
 " linting
-Plugin 'vim-syntastic/syntastic'
+Plug 'w0rp/ale'
 
 " filetypes
-Plugin 'pangloss/vim-javascript'
-Plugin 'mxw/vim-jsx'
-Plugin 'fatih/vim-go'
-Plugin 'majutsushi/tagbar'
-Plugin 'nightsense/carbonized'
+Plug 'pangloss/vim-javascript'
+Plug 'mxw/vim-jsx'
+Plug 'fatih/vim-go'
+Plug 'majutsushi/tagbar'
+Plug 'nightsense/carbonized'
 
-call vundle#end()
+call plug#end()
 
 filetype plugin indent on
 syntax enable
@@ -450,9 +441,14 @@ let g:go_metalinter_autosave_enabled = ['vet', 'golint']
 
 let g:go_metalinter_deadline = "5s"
 " }}}
+" ale {{{
+let g:ale_lint_on_text_changed = 'never'
+let g:ale_lint_on_insert_leave = 1
+" ale }}}
 " syntastic {{{
-let g:syntastic_javascript_checkers = ['eslint']
-let g:syntastic_javascript_eslint_exec = 'eslint_wrapper'
+"let g:syntastic_javascript_checkers = ['eslint']
+"let g:syntastic_javascript_eslint_exec = 'eslint_wrapper'
+"let g:syntastic_async = 1
 " }}}
 " matchit {{{
 " don't load the matchparen plugin
@@ -508,10 +504,16 @@ if has('gui_running')
 	"colorscheme visualstudio
 	"set background=light
 
-	colorscheme carbonized-dark
+	colorscheme OceanicNext
+	set background=dark
+
+	"colorscheme carbonized-dark
 	"hi Folded guifg=#dddddd guibg=#222222
 else
-	colorscheme carbonized-dark
+	colorscheme OceanicNext
+	set background=dark
+
+	"colorscheme carbonized-dark
 	"hi Folded guifg=#dddddd guibg=#222222
 end
 " colors }}}
