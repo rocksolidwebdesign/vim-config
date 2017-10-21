@@ -34,16 +34,17 @@ call plug#end()
 filetype plugin indent on
 syntax enable
 
-set termguicolors
-set t_ut=
-
-" set Vim-specific sequences for RGB colors
-let &t_8f = "[38;2;%lu;%lu;%lum"
-let &t_8b = "[48;2;%lu;%lu;%lum"
-
-let &t_SI = "[6 q"
-let &t_SR = "[4 q"
-let &t_EI = "[2 q"
+" terminal truecolor fixes
+"set termguicolors
+"set t_ut=
+"
+"" set Vim-specific sequences for RGB colors
+"let &t_8f = "[38;2;%lu;%lu;%lum"
+"let &t_8b = "[48;2;%lu;%lu;%lum"
+"
+"let &t_SI = "[6 q"
+"let &t_SR = "[4 q"
+"let &t_EI = "[2 q"
 
 let g:my_vim_folder = split(&rtp, ',')[0]
 
