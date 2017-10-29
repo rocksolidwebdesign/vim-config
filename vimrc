@@ -133,7 +133,7 @@ nmap <LocalLeader>w :call ToggleWrap()<CR>
 nmap <LocalLeader>s :call StripWhitespace()<CR>
 nmap <LocalLeader>m :call ToggleMousePaste()<CR>
 
-let g:ctrlp_map = "<Leader>t"
+let g:ctrlp_map = "<Leader>p"
 
 nmap <Leader>js :call logger#word()<CR>
 nmap <Leader>jv :call logger#line()<CR>
@@ -271,11 +271,13 @@ endif
 "	let g:clang_library_path='/usr/lib64/libclang.so.3.8'
 
 " ubuntu
-if !has('win32')
-	let g:clang_library_path='/usr/lib/x86_64-linux-gnu/libclang-3.8.so.1'
-	let g:clang_auto_select = 1
-	let g:clang_complete_auto = 0
-	let g:clang_complete_copen = 1
+let g:clang_auto_select = 1
+let g:clang_complete_auto = 0
+let g:clang_complete_copen = 1
+
+if has('unix') && !has('macunix')
+	" sudo apt-get install clang
+	let g:clang_library_path='/usr/lib/llvm-3.8/lib/libclang.so.1'
 end
 " clang_complete }}}
 " Golang {{{
@@ -294,6 +296,8 @@ let g:ale_lint_on_insert_leave = 1
 
 " ['go build', 'gofmt', 'golint', 'gometalinter', 'gosimple', 'go vet', 'staticcheck']
 let g:ale_linters = {'c': ['clang'], 'cpp': ['clang'], 'go': ['gofmt', 'go vet', 'go build']}
+
+let g:ale_cpp_clang_options = '-std=c++14'
 " ale }}}
 " syntastic {{{
 "let g:syntastic_javascript_checkers = ['eslint']

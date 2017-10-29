@@ -28,6 +28,14 @@ function! s:configure_language_defaults()
 	call s:set_default('logger_cpp_prefix', 'std::cout << ')
 	call s:set_default('logger_cpp_suffix', ' << std::endl;')
 	call s:set_default('logger_cpp_quote_char', '"')
+
+	call s:set_default('logger_cmake_prefix', 'message("')
+	call s:set_default('logger_cmake_suffix', '")')
+	call s:set_default('logger_cmake_token_prefix', ' ${')
+	call s:set_default('logger_cmake_token_suffix', '}')
+	call s:set_default('logger_cmake_quote_char', '')
+	call s:set_default('logger_cmake_arg_separator', '')
+	call s:set_default('logger_cmake_label_suffix', '')
 endfunction
 " languages }}}
 " main {{{
