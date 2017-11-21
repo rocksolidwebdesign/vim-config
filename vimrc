@@ -2,6 +2,8 @@ call plug#begin()
 
 " customization
 Plug 'flazz/vim-colorschemes'
+Plug 'xolox/vim-misc'
+Plug 'xolox/vim-colorscheme-switcher'
 
 " file management
 Plug 'ctrlpvim/ctrlp.vim'
@@ -145,6 +147,23 @@ imap <F5> :GoInstall<CR>
 " plugins }}}
 
 " My Settings
+" Completion {{{
+
+" disable searching #include folders for C++ because it can take
+" way too long when large libraries like boost are involved
+"
+" https://superuser.com/questions/77800/vims-autocomplete-how-to-prevent-vim-to-read-some-include-files
+"
+" optionally maybe ignore specific folders like boost
+" this regex is, as of yet, untested and comes from
+" the link above
+"
+"set include=^\\s*#\\s*include\ \\(<boost/\\)\\@!
+
+" this just tells complete not to look in any include folders at all
+set complete-=i
+
+" }}}
 " C++ include paths {{{
 set path+=/usr/include/linux,/usr/include/c++/v1,/usr/include/libcxxabi,/usr/local/include
 " C++ include paths }}}
@@ -183,9 +202,9 @@ endif
 " indentation {{{
 set expandtab
 set autoindent
-set tabstop=8
-set shiftwidth=2
-set softtabstop=2
+set tabstop=4
+set shiftwidth=4
+set softtabstop=4
 set nosmartindent
 " indentation }}}
 " listchars {{{
@@ -201,7 +220,7 @@ if !has('win32') || has("gui_running")
 	" if it's windows, then special chars only work in GUI
 
 	set list " show visible non-printing and special characters
-	set listchars=tab:\→\ ,trail:\‣,extends:\↷,precedes:\↶
+	set listchars=tab:\ \ ,trail:\‣,extends:\↷,precedes:\↶
 
 	" other examples
 
@@ -225,7 +244,7 @@ set winaltkeys=no " don't trigger menus on alt key
 " folding
 set foldmethod=marker
 
-set colorcolumn=60
+set colorcolumn=80
 " options }}}
 " search {{{
 set noignorecase
@@ -237,7 +256,7 @@ set showmatch
 " search }}}
 " statusline {{{
 set laststatus=2
-set statusline=[%n]\ %<%.99f\ %h%w%m%r%y%{fugitive#statusline()}%=%-16(\ %l,%c\ %)%P
+"set statusline=[%n]\ %<%.99f\ %h%w%m%r%y%{fugitive#statusline()}%=%-16(\ %l,%c\ %)%P
 " statusline }}}
 " swap_files {{{
 if has('win32')
@@ -292,7 +311,7 @@ let g:go_metalinter_deadline = "5s"
 " }}}
 " ale {{{
 let g:ale_lint_on_text_changed = 'never'
-let g:ale_lint_on_insert_leave = 1
+let g:ale_lint_on_insert_leave = 0
 
 " ['go build', 'gofmt', 'golint', 'gometalinter', 'gosimple', 'go vet', 'staticcheck']
 let g:ale_linters = {'c': ['clang'], 'cpp': ['clang'], 'go': ['gofmt', 'go vet', 'go build']}
@@ -537,10 +556,39 @@ endfunction
 " OpenNerdtree }}}
 " SetupColorschemesMenu {{{
 function! SetupColorschemesMenu()
-	let colorscheme_menu_files = split(globpath('~/.vim/plugged/vim-colorschemes/colors', '*'), '\n')
-	for i in range(1,len(colorscheme_menu_files)-1)
-		let scheme_name = fnamemodify(fnamemodify(colorscheme_menu_files[i], ":r"), ":t")
-		exec 'menu Plugin.Colorschemes.' . scheme_name . ' :colorscheme ' . scheme_name . '<CR>'
-	endfor
+    let colorscheme_menu_files = split(globpath('~/.vim/plugged/vim-colorschemes/colors', '*'), '\n')
+    for i in range(1,len(colorscheme_menu_files)-1)
+        let scheme_name = fnamemodify(fnamemodify(colorscheme_menu_files[i], ":r"), ":t")
+        exec 'menu Plugin.Colorschemes.' . scheme_name . ' :colorscheme ' . scheme_name . '<CR>'
+    endfor
 endfunction
 " SetupColorschemesMenu }}}
+" ClangFormat {{{
+let g:format_cpp_clang_style = get(g:, 'format_cpp_clang_style', 'file')
+
+function! FormatCppClang()
+    let filepath = expand("%")
+    call FormatCppClangFile(filepath)
+endfunction
+
+function! FormatCppClangFile(filepath)
+    let cli_args =
+        \ [
+        \ '-fallback-style=none',
+        \ '-style='.g:format_cpp_clang_style
+        \ ]
+
+    if exists('format_cpp_clang_filename')
+        if g:format_cpp_clang_filename != ''
+            call add(cli_args, '-assume-filename='.g:format_cpp_clang_filename)
+        endif
+    endif
+
+    let args_list = join(cli_args, ' ')
+    let cmd = '% ! clang-format ' . args_list
+
+    normal ma
+    exec cmd
+    normal 'a
+endfunction
+" ClangFormat }}}

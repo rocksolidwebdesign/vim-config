@@ -22,12 +22,14 @@ function! s:configure_language_defaults()
 	call s:set_default('logger_python_token_suffix', ')')
 	call s:set_default('logger_python_prefix', 'print(')
 	call s:set_default('logger_python_suffix', ')')
-	call s:set_default('logger_python_quote_char', '"')
+
+	call s:set_default('logger_vim_arg_separator', ' . ')
+	call s:set_default('logger_vim_prefix', 'echo ')
+	call s:set_default('logger_vim_suffix', '')
 
 	call s:set_default('logger_cpp_arg_separator', ' << ')
 	call s:set_default('logger_cpp_prefix', 'std::cout << ')
 	call s:set_default('logger_cpp_suffix', ' << std::endl;')
-	call s:set_default('logger_cpp_quote_char', '"')
 
 	call s:set_default('logger_cmake_prefix', 'message("')
 	call s:set_default('logger_cmake_suffix', '")')
