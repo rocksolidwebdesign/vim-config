@@ -30,6 +30,7 @@ Plug 'mxw/vim-jsx'
 Plug 'fatih/vim-go'
 Plug 'majutsushi/tagbar'
 Plug 'nightsense/carbonized'
+Plug 'leafgarland/typescript-vim'
 
 call plug#end()
 
