@@ -15,7 +15,7 @@ Plug 'vim-scripts/YankRing.vim'
 Plug 'tpope/vim-surround'
 Plug 'tpope/vim-fugitive'
 Plug 'mileszs/ack.vim'
-Plug 'SirVer/ultisnips'
+"Plug 'SirVer/ultisnips'
 
 if !has('win32')
 	Plug 'Rip-Rip/clang_complete'
@@ -38,7 +38,7 @@ filetype plugin indent on
 syntax enable
 
 " terminal truecolor fixes
-"set termguicolors
+set termguicolors
 "set t_ut=
 "
 "" set Vim-specific sequences for RGB colors
@@ -148,45 +148,6 @@ imap <F5> :GoInstall<CR>
 " plugins }}}
 
 " My Settings
-" Completion {{{
-
-" disable searching #include folders for C++ because it can take
-" way too long when large libraries like boost are involved
-"
-" https://superuser.com/questions/77800/vims-autocomplete-how-to-prevent-vim-to-read-some-include-files
-"
-" optionally maybe ignore specific folders like boost
-" this regex is, as of yet, untested and comes from
-" the link above
-"
-"set include=^\\s*#\\s*include\ \\(<boost/\\)\\@!
-
-" this just tells complete not to look in any include folders at all
-set complete-=i
-
-" }}}
-" C++ include paths {{{
-set path+=/usr/include/linux,/usr/include/c++/v1,/usr/include/libcxxabi,/usr/local/include
-" C++ include paths }}}
-" cindent {{{
-set cindent
-set cinoptions=
-set cinoptions+=t0
-set cinoptions+=j1
-set cinoptions+=m1
-set cinoptions+=(s
-set cinoptions+=N-s
-" cindent }}}
-" colors {{{
-"hi Folded guifg=#dddddd guibg=#222222
-if has('gui_running')
-	colorscheme OceanicNext
-	set background=dark
-else
-	colorscheme OceanicNext
-	set background=dark
-end
-" colors }}}
 " font {{{
 if has('gui_running')
 	if has('win32')
@@ -200,13 +161,24 @@ if has('gui_running')
 	endif
 endif
 " font }}}
+" colors {{{
+"hi Folded guifg=#dddddd guibg=#222222
+if has('gui_running')
+	colorscheme OceanicNext
+	set background=dark
+else
+	colorscheme OceanicNext
+	set background=dark
+end
+" colors }}}
 " indentation {{{
-set expandtab
 set autoindent
-set tabstop=4
-set shiftwidth=4
-set softtabstop=4
 set nosmartindent
+
+set expandtab
+set tabstop=2
+set shiftwidth=2
+set softtabstop=2
 " indentation }}}
 " listchars {{{
 if has('win32') && has("gui_running")
@@ -274,6 +246,26 @@ elseif has('unix')
 	endif
 endif
 " swap_files }}}
+" C++ Completion {{{
+
+" disable searching #include folders for C++ because it can take
+" way too long when large libraries like boost are involved
+"
+" https://superuser.com/questions/77800/vims-autocomplete-how-to-prevent-vim-to-read-some-include-files
+"
+" optionally maybe ignore specific folders like boost
+" this regex is, as of yet, untested and comes from
+" the link above
+"
+"set include=^\\s*#\\s*include\ \\(<boost/\\)\\@!
+
+" this just tells complete not to look in any include folders at all
+set complete-=i
+
+" }}}
+" C++ include paths {{{
+set path+=/usr/include/linux,/usr/include/c++/v1,/usr/include/libcxxabi,/usr/local/include
+" C++ include paths }}}
 
 " Plugin Settings
 " Ack.vim {{{
