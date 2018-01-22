@@ -15,7 +15,7 @@ Plug 'vim-scripts/YankRing.vim'
 Plug 'tpope/vim-surround'
 Plug 'tpope/vim-fugitive'
 Plug 'mileszs/ack.vim'
-"Plug 'SirVer/ultisnips'
+Plug 'SirVer/ultisnips'
 
 if !has('win32')
 	Plug 'Rip-Rip/clang_complete'
