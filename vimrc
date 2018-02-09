@@ -432,10 +432,12 @@ function! ToggleMousePaste()
 		set paste
 		set mouse=
 		set nonumber
+		set norelativenumber
 		echo 'Mouse Paste ON'
 	else
 		set nopaste
 		set number
+		set relativenumber
 		set mouse=a
 		echo 'Mouse Paste OFF'
 	endif
