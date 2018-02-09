@@ -16,6 +16,7 @@ Plug 'tpope/vim-surround'
 Plug 'tpope/vim-fugitive'
 Plug 'mileszs/ack.vim'
 Plug 'SirVer/ultisnips'
+Plug 'PProvost/vim-ps1'
 
 if !has('win32')
 	Plug 'Rip-Rip/clang_complete'
@@ -84,8 +85,11 @@ nmap <LocalLeader>g viwy:call AckForSelection()<CR>
 vmap <LocalLeader>g :call AckForSelection()<CR>
 
 " perl align
-nmap <LocalLeader>a :e ~/.vim/bin/align.pl<CR>
-vmap <LocalLeader>a :!perl ~/.vim/bin/align.pl -c:=
+if has('win32')
+  vnoremap <LocalLeader>a :! perl <C-r>=g:my_vim_folder<Cr>\bin\align.pl -c:=
+else
+  vmap <LocalLeader>a :!perl ~/.vim/bin/align.pl -c:=
+endif
 
 nnoremap / :set hls<CR>/
 " custom }}}
