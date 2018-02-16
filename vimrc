@@ -31,6 +31,7 @@ Plug 'fatih/vim-go'
 Plug 'majutsushi/tagbar'
 Plug 'nightsense/carbonized'
 Plug 'leafgarland/typescript-vim'
+Plug 'briancollins/vim-jst'
 
 call plug#end()
 
