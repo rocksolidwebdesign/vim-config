@@ -19,7 +19,7 @@ Plug 'SirVer/ultisnips'
 Plug 'PProvost/vim-ps1'
 
 if !has('win32')
-	Plug 'Rip-Rip/clang_complete'
+  Plug 'Rip-Rip/clang_complete'
 end
 
 " linting
@@ -40,9 +40,13 @@ filetype plugin indent on
 syntax enable
 
 " terminal truecolor fixes
-set termguicolors
+if !has("gui") && !has("macunix")
+  " but we maybe do want to do this for nvim
+  " even on macOS
+  set termguicolors
+endif
 "set t_ut=
-"
+
 "" set Vim-specific sequences for RGB colors
 "let &t_8f = "[38;2;%lu;%lu;%lum"
 "let &t_8b = "[48;2;%lu;%lu;%lum"
@@ -155,26 +159,26 @@ imap <F5> :GoInstall<CR>
 " My Settings
 " font {{{
 if has('gui_running')
-	if has('win32')
-		set guifont=DejaVu_Sans_Mono:h12
-	elseif has('unix')
-		if has('macunix')
-			set guifont=DejaVu\ Sans\ Mono:h16
-		else
-			set guifont=DejaVu\ Sans\ Mono\ 12
-		endif
-	endif
+  if has('win32')
+    set guifont=DejaVu_Sans_Mono:h12
+  elseif has('unix')
+    if has('macunix')
+      set guifont=DejaVu\ Sans\ Mono:h16
+    else
+      set guifont=DejaVu\ Sans\ Mono\ 12
+    endif
+  endif
 endif
 " font }}}
 " colors {{{
-"hi Folded guifg=#dddddd guibg=#222222
 if has('gui_running')
-	colorscheme OceanicNext
-	set background=dark
+  colorscheme OceanicNext
+  set background=dark
 else
-	colorscheme OceanicNext
-	set background=dark
+  colorscheme OceanicNext
+  set background=dark
 end
+hi Folded guifg=#dddddd guibg=#333333
 " colors }}}
 " indentation {{{
 set autoindent
@@ -187,25 +191,25 @@ set softtabstop=2
 " indentation }}}
 " listchars {{{
 if has('win32') && has("gui_running")
-	" windows needs to have utf-8
-	" encoding forced so we can see
-	" fun characters
-	set encoding=utf-8
+  " windows needs to have utf-8
+  " encoding forced so we can see
+  " fun characters
+  set encoding=utf-8
 end
 
 if !has('win32') || has("gui_running")
-	" if it's not windows then the special chars work anywhere
-	" if it's windows, then special chars only work in GUI
+  " if it's not windows then the special chars work anywhere
+  " if it's windows, then special chars only work in GUI
 
-	set list " show visible non-printing and special characters
-	set listchars=tab:\ \ ,trail:\‣,extends:\↷,precedes:\↶
+  set list " show visible non-printing and special characters
+  set listchars=tab:\→\ ,trail:\‣,extends:\↷,precedes:\↶
 
-	" other examples
+  " other examples
 
-	" set listchars=tab:\⇒\─,trail:\‣,extends:\↷,precedes:\↶
-	" set listchars=tab:\→\ ,trail:\‣,extends:\↷,precedes:\↶
-	" set listchars=tab:\↴\⇒,trail:\⎕,extends:\↻,precedes:\↺,eol:\↵
-	" set listchars=tab:\┼\─,trail:\˽,extends:\↷,precedes:\↶
+  " set listchars=tab:\⇒\─,trail:\‣,extends:\↷,precedes:\↶
+  " set listchars=tab:\→\ ,trail:\‣,extends:\↷,precedes:\↶
+  " set listchars=tab:\↴\⇒,trail:\⎕,extends:\↻,precedes:\↺,eol:\↵
+  " set listchars=tab:\┼\─,trail:\˽,extends:\↷,precedes:\↶
 end
 " listchars }}}
 " options {{{
@@ -238,17 +242,17 @@ set laststatus=2
 " statusline }}}
 " swap_files {{{
 if has('win32')
-	if exists('my_diff_mode_flag') && my_diff_mode_flag == 1
-		set directory=~\.swpdiff,~,.
-	else
-		set directory=~\.swp,~,.
-	endif
+  if exists('my_diff_mode_flag') && my_diff_mode_flag == 1
+    set directory=~\.swpdiff,~,.
+  else
+    set directory=~\.swp,~,.
+  endif
 elseif has('unix')
-	if exists('my_diff_mode_flag') && my_diff_mode_flag == 1
-		set directory=~/.swpdiff,~,.
-	else
-		set directory=~/.swp,~,.
-	endif
+  if exists('my_diff_mode_flag') && my_diff_mode_flag == 1
+    set directory=~/.swpdiff,~,.
+  else
+    set directory=~/.swp,~,.
+  endif
 endif
 " swap_files }}}
 " C++ Completion {{{
@@ -293,8 +297,8 @@ let g:clang_complete_auto = 0
 let g:clang_complete_copen = 1
 
 if has('unix') && !has('macunix')
-	" sudo apt-get install clang
-	let g:clang_library_path='/usr/lib/llvm-3.8/lib/libclang.so.1'
+  " sudo apt-get install clang
+  let g:clang_library_path='/usr/lib/llvm-3.8/lib/libclang.so.1'
 end
 " clang_complete }}}
 " Golang {{{
@@ -359,10 +363,10 @@ let ruby_no_expensive = 1
 " Shims
 " win32_utf8_shim {{{
 if has('win32') && has('gui_running')
-	" windows needs to have utf-8
-	" encoding forced so we can see
-	" fun characters
-	set encoding=utf-8
+  " windows needs to have utf-8
+  " encoding forced so we can see
+  " fun characters
+  set encoding=utf-8
 end
 " win32_utf8_shim }}}
 " shim_prefs {{{
@@ -371,12 +375,12 @@ autocmd BufNew,BufRead * setlocal relativenumber
 
 " keep cursor at least one line down while scrolling
 if !&scrolloff
-	set scrolloff=1
+  set scrolloff=1
 endif
 
 " keep cursor at least x number of chars inwards as we scroll
 if !&sidescrolloff
-	set sidescrolloff=5
+  set sidescrolloff=5
 endif
 
 " make arrow keys and backspacing over lines more natural
@@ -396,72 +400,72 @@ set winminwidth=0
 " shim_prefs }}}
 " terminal_color_shim {{{
 if !has('gui_running')
-	if &t_Co == 8 && $TERM !~# '^linux'
-		set t_Co=16
-	endif
+  if &t_Co == 8 && $TERM !~# '^linux'
+    set t_Co=16
+  endif
 
-	set mouse=a
+  set mouse=a
 end
 " terminal_color_shim }}}
 " windows_shell_fix {{{
 if has('win32')
-	" fix the behavior of escaping etc when using
-	" the standard windows command prompt
-	set shell=C:\Windows\System32\cmd.exe
-	set shellcmdflag=/c
-	set shellxquote=(
-	"set shellredir=>%s 2>&1
+  " fix the behavior of escaping etc when using
+  " the standard windows command prompt
+  set shell=C:\Windows\System32\cmd.exe
+  set shellcmdflag=/c
+  set shellxquote=(
+  "set shellredir=>%s 2>&1
 endif
 " windows_shell_fix }}}
 
 " Functions
 " ToggleFold {{{
 function! ToggleFold()
-	if foldlevel('.') == 0
-		normal! l
-	else
-		if foldclosed('.') < 0
-			. foldclose
-		else
-			. foldopen
-		endif
-	endif
+  if foldlevel('.') == 0
+    normal! l
+  else
+    if foldclosed('.') < 0
+      . foldclose
+    else
+      . foldopen
+    endif
+  endif
 
-	" Clear status line
-	echo
+  " Clear status line
+  echo
 endfunction
 " ToggleFold }}}
 " ToggleMousePaste {{{
 function! ToggleMousePaste()
-	if &mouse == 'a'
-		set paste
-		set mouse=
-		set nonumber
-		set norelativenumber
-		echo 'Mouse Paste ON'
-	else
-		set nopaste
-		set number
-		set relativenumber
-		set mouse=a
-		echo 'Mouse Paste OFF'
-	endif
+  if &mouse == 'a'
+    set paste
+    set mouse=
+    set nonumber
+    set norelativenumber
+    echo 'Mouse Paste ON'
+  else
+    set nopaste
+    set number
+    set relativenumber
+    set mouse=a
+    echo 'Mouse Paste OFF'
+  endif
 endfunction
 " ToggleMousePaste }}}
 " ToggleRelativeNumber {{{
 function! ToggleRelativeNumber()
-	if( &nu == 1 )
-		set nonu
-		set rnu
-	else
-		set nu
-		set nornu
-	endif
+  if( &nu == 1 )
+    set nonu
+    set rnu
+  else
+    set nu
+    set nornu
+  endif
 endfunction
 
 function! ToggleRelativeNumberVisual()
-	call ToggleRelativeNumber()
-	normal gvj
+  call ToggleRelativeNumber()
+  normal gvj
 endfunction
 " relative_line_number }}}
 " StripWhitespace {{{
@@ -472,48 +476,48 @@ function! StripWhitespace()
 endfunction
 
 function! Mark(...)
-	if a:0 == 0
-		let mark = line('.') . 'G' . virtcol('.') . '|'
-		normal! H
-		let mark = 'normal!' . line('.') . 'Gzt' . mark
-		execute mark
-		return mark
-	elseif a:0 == 1
-		return 'normal!' . a:1 . 'G1|'
-	else
-		return 'normal!' . a:1 . 'G' . a:2 . '|'
-	endif
+  if a:0 == 0
+    let mark = line('.') . 'G' . virtcol('.') . '|'
+    normal! H
+    let mark = 'normal!' . line('.') . 'Gzt' . mark
+    execute mark
+    return mark
+  elseif a:0 == 1
+    return 'normal!' . a:1 . 'G1|'
+  else
+    return 'normal!' . a:1 . 'G' . a:2 . '|'
+  endif
 endfunction
 " StripWhitespace }}}
 " ToggleWrap {{{
 function! ToggleWrap()
-	set wrap!
+  set wrap!
 
-	if( &wrap == 1 )
-		nmap j gj
-		nmap k gk
-	else
-		unmap j
-		unmap k
-	endif
+  if( &wrap == 1 )
+    nmap j gj
+    nmap k gk
+  else
+    unmap j
+    unmap k
+  endif
 endfunction
 " ToggleWrap }}}
 " GetClosure {{{
 function! GetClosure()
-	let closure = ''
-	let syntax_type = &ft
+  let closure = ''
+  let syntax_type = &ft
 
-	normal ma
-	if syntax_type == 'cpp'
-		let closure = "[](auto& x) {\nreturn x;\n}"
-	elseif syntax_type == 'javascript' || syntax_type == 'javascript.jsx'
-		let closure = "(x) => {\nreturn x;\n}"
-	elseif syntax_type == 'ruby'
-		let closure = '{ |x| x * x }'
-	endif
+  normal ma
+  if syntax_type == 'cpp'
+    let closure = "[](auto& x) {\nreturn x;\n}"
+  elseif syntax_type == 'javascript' || syntax_type == 'javascript.jsx'
+    let closure = "(x) => {\nreturn x;\n}"
+  elseif syntax_type == 'ruby'
+    let closure = '{ |x| x * x }'
+  endif
 
-	exe 'normal i' . closure
-	normal k^
+  exe 'normal i' . closure
+  normal k^
 endfunction
 " GetClosure }}}
 " AckForSelection {{{
@@ -544,51 +548,51 @@ endfunction
 " AckForSelection }}}
 " OpenNerdtree {{{
 function! OpenNerdtree()
-	" open nerdtree when vim starts and
-	" navigate to a custom folder
-	"
-	" autocmd VimEnter * NERDTree
-	" autocmd VimEnter * normal 3jo5jo2jo
+  " open nerdtree when vim starts and
+  " navigate to a custom folder
+  "
+  " autocmd VimEnter * NERDTree
+  " autocmd VimEnter * normal 3jo5jo2jo
 
-	NERDTree
-	set relativenumber
+  NERDTree
+  set relativenumber
 endfunction
 " OpenNerdtree }}}
 " SetupColorschemesMenu {{{
 function! SetupColorschemesMenu()
-    let colorscheme_menu_files = split(globpath('~/.vim/plugged/vim-colorschemes/colors', '*'), '\n')
-    for i in range(1,len(colorscheme_menu_files)-1)
-        let scheme_name = fnamemodify(fnamemodify(colorscheme_menu_files[i], ":r"), ":t")
-        exec 'menu Plugin.Colorschemes.' . scheme_name . ' :colorscheme ' . scheme_name . '<CR>'
-    endfor
+  let colorscheme_menu_files = split(globpath('~/.vim/plugged/vim-colorschemes/colors', '*'), '\n')
+  for i in range(1,len(colorscheme_menu_files)-1)
+    let scheme_name = fnamemodify(fnamemodify(colorscheme_menu_files[i], ":r"), ":t")
+    exec 'menu Plugin.Colorschemes.' . scheme_name . ' :colorscheme ' . scheme_name . '<CR>'
+  endfor
 endfunction
 " SetupColorschemesMenu }}}
 " ClangFormat {{{
 let g:format_cpp_clang_style = get(g:, 'format_cpp_clang_style', 'file')
 
 function! FormatCppClang()
-    let filepath = expand("%")
-    call FormatCppClangFile(filepath)
+  let filepath = expand("%")
+  call FormatCppClangFile(filepath)
 endfunction
 
 function! FormatCppClangFile(filepath)
-    let cli_args =
+  let cli_args =
         \ [
         \ '-fallback-style=none',
         \ '-style='.g:format_cpp_clang_style
         \ ]
 
-    if exists('format_cpp_clang_filename')
-        if g:format_cpp_clang_filename != ''
-            call add(cli_args, '-assume-filename='.g:format_cpp_clang_filename)
-        endif
+  if exists('format_cpp_clang_filename')
+    if g:format_cpp_clang_filename != ''
+      call add(cli_args, '-assume-filename='.g:format_cpp_clang_filename)
     endif
+  endif
 
-    let args_list = join(cli_args, ' ')
-    let cmd = '% ! clang-format ' . args_list
+  let args_list = join(cli_args, ' ')
+  let cmd = '% ! clang-format ' . args_list
 
-    normal ma
-    exec cmd
-    normal 'a
+  normal ma
+  exec cmd
+  normal 'a
 endfunction
 " ClangFormat }}}
