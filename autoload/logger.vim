@@ -3,6 +3,10 @@ function! s:init()
 	call s:configure_language_defaults()
 endfunction
 
+function! s:get_config_val(var_name, default_val)
+	return get(b:, a:var_name, get(g:, a:var_name, a:default_val))
+endfunction
+
 " languages {{{
 function! s:configure_language_defaults()
 	call s:set_default('logger_shut_up', 0)
@@ -68,14 +72,14 @@ function! s:concat_var_output(token)
 
 	let st = s:syntax_type()
 
-	let quote_char    = get(g:, 'logger_'.st.'_quote_char',    '"')
-	let line_prefix   = get(g:, 'logger_'.st.'_prefix',        'print(')
-	let line_suffix   = get(g:, 'logger_'.st.'_suffix',        ');')
-	let token_prefix  = get(g:, 'logger_'.st.'_token_prefix',  '')
-	let token_suffix  = get(g:, 'logger_'.st.'_token_suffix',  '')
+	let quote_char    = s:get_config_val('logger_'.st.'_quote_char',     '"')
+	let line_prefix   = s:get_config_val('logger_'.st.'_prefix',         'print(')
+	let line_suffix   = s:get_config_val('logger_'.st.'_suffix',         ');')
+	let token_prefix  = s:get_config_val('logger_'.st.'_token_prefix',   '')
+	let token_suffix  = s:get_config_val('logger_'.st.'_token_suffix',   '')
 
-	let label_suffix  = get(g:, 'logger_'.st.'_label_suffix',  ': ')
-	let arg_separator = get(g:, 'logger_'.st.'_arg_separator', ', ')
+	let label_suffix  = s:get_config_val('logger_'.st.'_label_suffix',   ': ')
+	let arg_separator = s:get_config_val('logger_'.st.'_arg_separator',  ', ')
 
 	let result = line_prefix . quote_char . a:token . label_suffix . quote_char . arg_separator . token_prefix . a:token . token_suffix . line_suffix
 
@@ -87,11 +91,11 @@ function! s:concat_line_output(value)
 
 	let st = s:syntax_type()
 
-	let quote_char   = get(g:, 'logger_'.st.'_quote_char',   '"')
-	let line_prefix  = get(g:, 'logger_'.st.'_prefix',       'print(')
-	let line_suffix  = get(g:, 'logger_'.st.'_suffix',       ');')
-	let token_prefix = get(g:, 'logger_'.st.'_token_prefix', '')
-	let token_suffix = get(g:, 'logger_'.st.'_token_suffix', '')
+	let quote_char   = s:get_config_val('logger_'.st.'_quote_char',    '"')
+	let line_prefix  = s:get_config_val('logger_'.st.'_prefix',        'print(')
+	let line_suffix  = s:get_config_val('logger_'.st.'_suffix',        ');')
+	let token_prefix = s:get_config_val('logger_'.st.'_token_prefix',  '')
+	let token_suffix = s:get_config_val('logger_'.st.'_token_suffix',  '')
 
 	let log_line = line_prefix . quote_char . a:value . quote_char . line_suffix
 
@@ -120,7 +124,7 @@ endfunction
 function! s:is_loggable()
 	let st = s:syntax_type()
 
-	let line_prefix = get(g:, 'logger_'.st.'_prefix', '')
+	let line_prefix = s:get_config_val('logger_'.st.'_prefix',  '')
 
 	if line_prefix ==? ''
 		if !g:logger_shut_up
