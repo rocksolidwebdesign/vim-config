@@ -40,7 +40,7 @@ filetype plugin indent on
 syntax enable
 
 " terminal truecolor fixes
-if !has("gui") && !has("macunix")
+if !has("gui_running") && !has("macunix")
   " but we maybe do want to do this for nvim
   " even on macOS
   set termguicolors
@@ -298,7 +298,7 @@ let g:clang_complete_copen = 1
 
 if has('unix') && !has('macunix')
   " sudo apt-get install clang
-  let g:clang_library_path='/usr/lib/llvm-3.8/lib/libclang.so.1'
+  let g:clang_library_path='/usr/lib/llvm-6.0/lib/libclang.so.1'
 end
 " clang_complete }}}
 " Golang {{{
