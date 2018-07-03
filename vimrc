@@ -40,7 +40,7 @@ filetype plugin indent on
 syntax enable
 
 " terminal truecolor fixes
-if !has("gui_running") && !has("macunix")
+if !has("gui_running") && !has("macunix") && !has('win32')
   " but we maybe do want to do this for nvim
   " even on macOS
   set termguicolors
@@ -59,6 +59,243 @@ let g:my_vim_folder = split(&rtp, ',')[0]
 
 " Vim Settings
 set exrc
+
+" Functions
+" ToggleFold {{{
+function! ToggleFold()
+  if foldlevel('.') == 0
+    normal! l
+  else
+    if foldclosed('.') < 0
+      . foldclose
+    else
+      . foldopen
+    endif
+  endif
+
+  " Clear status line
+  echo
+endfunction
+" ToggleFold }}}
+" ToggleMousePaste {{{
+function! ToggleMousePaste()
+  if &mouse == 'a'
+    set paste
+    set mouse=
+    set nonumber
+    set norelativenumber
+    echo 'Mouse Paste ON'
+  else
+    set nopaste
+    set number
+    set relativenumber
+    set mouse=a
+    echo 'Mouse Paste OFF'
+  endif
+endfunction
+" ToggleMousePaste }}}
+" ToggleRelativeNumber {{{
+function! ToggleRelativeNumber()
+  if( &nu == 1 )
+    set nonu
+    set rnu
+  else
+    set nu
+    set nornu
+  endif
+endfunction
+
+function! ToggleRelativeNumberVisual()
+  call ToggleRelativeNumber()
+  normal gvj
+endfunction
+" relative_line_number }}}
+" StripWhitespace {{{
+function! StripWhitespace()
+  let currPos=Mark()
+  exe 'v:^--\s*$:s:\s\+$::e'
+  exe currPos
+endfunction
+
+function! Mark(...)
+  if a:0 == 0
+    let mark = line('.') . 'G' . virtcol('.') . '|'
+    normal! H
+    let mark = 'normal!' . line('.') . 'Gzt' . mark
+    execute mark
+    return mark
+  elseif a:0 == 1
+    return 'normal!' . a:1 . 'G1|'
+  else
+    return 'normal!' . a:1 . 'G' . a:2 . '|'
+  endif
+endfunction
+" StripWhitespace }}}
+" ToggleWrap {{{
+function! ToggleWrap()
+  set wrap!
+
+  if( &wrap == 1 )
+    nmap j gj
+    nmap k gk
+  else
+    unmap j
+    unmap k
+  endif
+endfunction
+" ToggleWrap }}}
+" GetClosure {{{
+function! GetClosure()
+  let closure = ''
+  let syntax_type = &ft
+
+  normal ma
+  if syntax_type == 'cpp'
+    let closure = "[](auto& x) {\nreturn x;\n}"
+  elseif syntax_type == 'javascript' || syntax_type == 'javascript.jsx'
+    let closure = "(x) => {\nreturn x;\n}"
+  elseif syntax_type == 'ruby'
+    let closure = '{ |x| x * x }'
+  endif
+
+  exe 'normal i' . closure
+  normal k^
+endfunction
+" GetClosure }}}
+" AckForSelection {{{
+function! AckForSelection()
+  " escape PCRE regex chars
+  let search_term = substitute(GetVisualSelection(), '\([.*+?()]\)', '\\\1', 'g')
+
+  let dirs = get(g:, 'ack_dirs', 'src')
+  echo dirs
+  let cmd = "Ack '" . search_term . "' " . dirs
+
+  " run the search
+  execute cmd
+
+  " open the search results window
+  botright copen
+endfunction
+
+function! GetVisualSelection()
+  " Why is this not a built-in Vim script function?!
+  let [lnum1, col1] = getpos("'<")[1:2]
+  let [lnum2, col2] = getpos("'>")[1:2]
+  let lines = getline(lnum1, lnum2)
+  let lines[-1] = lines[-1][: col2 - (&selection == 'inclusive' ? 1 : 2)]
+  let lines[0] = lines[0][col1 - 1:]
+  return join(lines, "\n")
+endfunction
+" AckForSelection }}}
+" OpenNerdtree {{{
+function! OpenNerdtree()
+  " open nerdtree when vim starts and
+  " navigate to a custom folder
+  "
+  " autocmd VimEnter * NERDTree
+  " autocmd VimEnter * normal 3jo5jo2jo
+
+  NERDTree
+  set relativenumber
+endfunction
+" OpenNerdtree }}}
+" SetupColorschemesMenu {{{
+function! SetupColorschemesMenu()
+  let colorscheme_menu_files = split(globpath('~/.vim/plugged/vim-colorschemes/colors', '*'), '\n')
+  for i in range(1,len(colorscheme_menu_files)-1)
+    let scheme_name = fnamemodify(fnamemodify(colorscheme_menu_files[i], ":r"), ":t")
+    exec 'menu Plugin.Colorschemes.' . scheme_name . ' :colorscheme ' . scheme_name . '<CR>'
+  endfor
+endfunction
+" SetupColorschemesMenu }}}
+" ClangFormat {{{
+let g:format_cpp_clang_style = get(g:, 'format_cpp_clang_style', 'file')
+
+function! FormatCppClang()
+  let filepath = expand("%")
+  call FormatCppClangFile(filepath)
+endfunction
+
+function! FormatCppClangFile(filepath)
+  let cli_args =
+        \ [
+        \ '-fallback-style=none',
+        \ '-style='.g:format_cpp_clang_style
+        \ ]
+
+  if exists('format_cpp_clang_filename')
+    if g:format_cpp_clang_filename != ''
+      call add(cli_args, '-assume-filename='.g:format_cpp_clang_filename)
+    endif
+  endif
+
+  let args_list = join(cli_args, ' ')
+  let cmd = '% ! clang-format ' . args_list
+
+  normal ma
+  exec cmd
+  normal 'a
+endfunction
+" ClangFormat }}}
+
+" Shims
+" shim_prefs {{{
+" keep relative line number on permanently/by default
+autocmd BufNew,BufRead * setlocal relativenumber
+
+" keep cursor at least one line down while scrolling
+if !&scrolloff
+  set scrolloff=1
+endif
+
+" keep cursor at least x number of chars inwards as we scroll
+if !&sidescrolloff
+  set sidescrolloff=5
+endif
+
+" make arrow keys and backspacing over lines more natural
+set backspace=2
+set whichwrap=b,s,h,l,[,],<,>
+
+" show long lines instead of truncating with @ symbol
+" show unprintable chars as HEX codes
+set display=lastline,uhex
+
+" make sure sessions remember window size
+set sessionoptions+=resize
+
+" don't force splits to be any width at all
+set winminheight=0
+set winminwidth=0
+" shim_prefs }}}
+" terminal_color_shim {{{
+if !has('gui_running')
+  if &t_Co == 8 && $TERM !~# '^linux'
+    set t_Co=16
+  endif
+
+  set mouse=a
+end
+" terminal_color_shim }}}
+" win32_utf8_shim {{{
+if has('win32') && has('gui_running')
+  " windows needs to have utf-8
+  " encoding forced so we can see
+  " fun characters
+  set encoding=utf-8
+end
+" win32_utf8_shim }}}
+" windows_shell_fix {{{
+if has('win32')
+  " fix the behavior of escaping etc when using
+  " the standard windows command prompt
+  set shell=C:\Windows\System32\cmd.exe
+  set shellcmdflag=/c
+  set shellxquote=(
+  "set shellredir=>%s 2>&1
+endif
+" windows_shell_fix }}}
 
 " My Keymaps
 " custom {{{
@@ -276,12 +513,48 @@ set complete-=i
 set path+=/usr/include/linux,/usr/include/c++/v1,/usr/include/libcxxabi,/usr/local/include
 " C++ include paths }}}
 
-" Plugin Settings
-" Ack.vim {{{
+" Standard Plugin Settings
+" matchit {{{
+" don't load the matchparen plugin
+let loaded_matchparen = 1
+" }}}
+
+" Custom Plugin Settings
+" NERDTree {{{
+" prevent annoying warnings from nerdtree
+let g:NERDShutUp = 1
+" }}}
+" ALE {{{
+let g:ale_lint_on_text_changed = 'never'
+let g:ale_lint_on_insert_leave = 0
+
+" ['go build', 'gofmt', 'golint', 'gometalinter', 'gosimple', 'go vet', 'staticcheck']
+let g:ale_linters = {'c': ['clang'], 'cpp': ['clang'], 'go': ['gofmt', 'go vet', 'go build']}
+
+let g:ale_cpp_clang_options = '-std=c++14'
+" ale }}}
+" Ack {{{
 if executable('ag')
   let g:ackprg = 'ag --vimgrep'
 endif
 " }}}
+" CTRL-p {{{
+let g:ctrlp_custom_ignore = '\.node_modules\|\.DS_Store\|\.git\|vendor'
+" }}}
+" yankring {{{
+" use a vertical window split
+let g:yankring_window_use_horiz = 0
+
+let g:yankring_history_dir = '~/.yankring,~/.swp,~/.tmp,~/tmp,/tmp,~/.vim,~/vimfiles'
+
+" don't include single character deletes
+let g:yankring_min_element_length = 2
+
+" truncate each paste at 50 chars to keep the window width small
+let g:yankring_max_display        = 50
+" }}}
+
+" Filetype Plugin Settings
 " clang_complete {{{
 
 " from github README:
@@ -311,45 +584,8 @@ let g:go_metalinter_autosave_enabled = ['vet', 'golint']
 
 let g:go_metalinter_deadline = "5s"
 " }}}
-" ale {{{
-let g:ale_lint_on_text_changed = 'never'
-let g:ale_lint_on_insert_leave = 0
-
-" ['go build', 'gofmt', 'golint', 'gometalinter', 'gosimple', 'go vet', 'staticcheck']
-let g:ale_linters = {'c': ['clang'], 'cpp': ['clang'], 'go': ['gofmt', 'go vet', 'go build']}
-
-let g:ale_cpp_clang_options = '-std=c++14'
-" ale }}}
-" syntastic {{{
-"let g:syntastic_javascript_checkers = ['eslint']
-"let g:syntastic_javascript_eslint_exec = 'eslint_wrapper'
-"let g:syntastic_async = 1
-" }}}
-" matchit {{{
-" don't load the matchparen plugin
-let loaded_matchparen = 1
-" }}}
-" CTRL-p {{{
-let g:ctrlp_custom_ignore = '\.node_modules\|\.DS_Store\|\.git\|vendor'
-" }}}
 " JSX {{{
 let g:jsx_ext_required = 1
-" }}}
-" NERDTree {{{
-" prevent annoying warnings from nerdtree
-let g:NERDShutUp = 1
-" }}}
-" yankring {{{
-" use a vertical window split
-let g:yankring_window_use_horiz = 0
-
-let g:yankring_history_dir = '~/.yankring,~/.swp,~/.tmp,~/tmp,/tmp,~/.vim,~/vimfiles'
-
-" don't include single character deletes
-let g:yankring_min_element_length = 2
-
-" truncate each paste at 50 chars to keep the window width small
-let g:yankring_max_display        = 50
 " }}}
 " ruby {{{
 "
@@ -359,240 +595,3 @@ let g:yankring_max_display        = 50
 "   syntax hilite with folds
 let ruby_no_expensive = 1
 " }}}
-
-" Shims
-" win32_utf8_shim {{{
-if has('win32') && has('gui_running')
-  " windows needs to have utf-8
-  " encoding forced so we can see
-  " fun characters
-  set encoding=utf-8
-end
-" win32_utf8_shim }}}
-" shim_prefs {{{
-" keep relative line number on permanently/by default
-autocmd BufNew,BufRead * setlocal relativenumber
-
-" keep cursor at least one line down while scrolling
-if !&scrolloff
-  set scrolloff=1
-endif
-
-" keep cursor at least x number of chars inwards as we scroll
-if !&sidescrolloff
-  set sidescrolloff=5
-endif
-
-" make arrow keys and backspacing over lines more natural
-set backspace=2
-set whichwrap=b,s,h,l,[,],<,>
-
-" show long lines instead of truncating with @ symbol
-" show unprintable chars as HEX codes
-set display=lastline,uhex
-
-" make sure sessions remember window size
-set sessionoptions+=resize
-
-" don't force splits to be any width at all
-set winminheight=0
-set winminwidth=0
-" shim_prefs }}}
-" terminal_color_shim {{{
-if !has('gui_running')
-  if &t_Co == 8 && $TERM !~# '^linux'
-    set t_Co=16
-  endif
-
-  set mouse=a
-end
-" terminal_color_shim }}}
-" windows_shell_fix {{{
-if has('win32')
-  " fix the behavior of escaping etc when using
-  " the standard windows command prompt
-  set shell=C:\Windows\System32\cmd.exe
-  set shellcmdflag=/c
-  set shellxquote=(
-  "set shellredir=>%s 2>&1
-endif
-" windows_shell_fix }}}
-
-" Functions
-" ToggleFold {{{
-function! ToggleFold()
-  if foldlevel('.') == 0
-    normal! l
-  else
-    if foldclosed('.') < 0
-      . foldclose
-    else
-      . foldopen
-    endif
-  endif
-
-  " Clear status line
-  echo
-endfunction
-" ToggleFold }}}
-" ToggleMousePaste {{{
-function! ToggleMousePaste()
-  if &mouse == 'a'
-    set paste
-    set mouse=
-    set nonumber
-    set norelativenumber
-    echo 'Mouse Paste ON'
-  else
-    set nopaste
-    set number
-    set relativenumber
-    set mouse=a
-    echo 'Mouse Paste OFF'
-  endif
-endfunction
-" ToggleMousePaste }}}
-" ToggleRelativeNumber {{{
-function! ToggleRelativeNumber()
-  if( &nu == 1 )
-    set nonu
-    set rnu
-  else
-    set nu
-    set nornu
-  endif
-endfunction
-
-function! ToggleRelativeNumberVisual()
-  call ToggleRelativeNumber()
-  normal gvj
-endfunction
-" relative_line_number }}}
-" StripWhitespace {{{
-function! StripWhitespace()
-  let currPos=Mark()
-  exe 'v:^--\s*$:s:\s\+$::e'
-  exe currPos
-endfunction
-
-function! Mark(...)
-  if a:0 == 0
-    let mark = line('.') . 'G' . virtcol('.') . '|'
-    normal! H
-    let mark = 'normal!' . line('.') . 'Gzt' . mark
-    execute mark
-    return mark
-  elseif a:0 == 1
-    return 'normal!' . a:1 . 'G1|'
-  else
-    return 'normal!' . a:1 . 'G' . a:2 . '|'
-  endif
-endfunction
-" StripWhitespace }}}
-" ToggleWrap {{{
-function! ToggleWrap()
-  set wrap!
-
-  if( &wrap == 1 )
-    nmap j gj
-    nmap k gk
-  else
-    unmap j
-    unmap k
-  endif
-endfunction
-" ToggleWrap }}}
-" GetClosure {{{
-function! GetClosure()
-  let closure = ''
-  let syntax_type = &ft
-
-  normal ma
-  if syntax_type == 'cpp'
-    let closure = "[](auto& x) {\nreturn x;\n}"
-  elseif syntax_type == 'javascript' || syntax_type == 'javascript.jsx'
-    let closure = "(x) => {\nreturn x;\n}"
-  elseif syntax_type == 'ruby'
-    let closure = '{ |x| x * x }'
-  endif
-
-  exe 'normal i' . closure
-  normal k^
-endfunction
-" GetClosure }}}
-" AckForSelection {{{
-function! AckForSelection()
-  " escape PCRE regex chars
-  let search_term = substitute(GetVisualSelection(), '\([.*+?()]\)', '\\\1', 'g')
-
-  let dirs = get(g:, 'ack_dirs', 'src')
-  echo dirs
-  let cmd = "Ack '" . search_term . "' " . dirs
-
-  " run the search
-  execute cmd
-
-  " open the search results window
-  botright copen
-endfunction
-
-function! GetVisualSelection()
-  " Why is this not a built-in Vim script function?!
-  let [lnum1, col1] = getpos("'<")[1:2]
-  let [lnum2, col2] = getpos("'>")[1:2]
-  let lines = getline(lnum1, lnum2)
-  let lines[-1] = lines[-1][: col2 - (&selection == 'inclusive' ? 1 : 2)]
-  let lines[0] = lines[0][col1 - 1:]
-  return join(lines, "\n")
-endfunction
-" AckForSelection }}}
-" OpenNerdtree {{{
-function! OpenNerdtree()
-  " open nerdtree when vim starts and
-  " navigate to a custom folder
-  "
-  " autocmd VimEnter * NERDTree
-  " autocmd VimEnter * normal 3jo5jo2jo
-
-  NERDTree
-  set relativenumber
-endfunction
-" OpenNerdtree }}}
-" SetupColorschemesMenu {{{
-function! SetupColorschemesMenu()
-  let colorscheme_menu_files = split(globpath('~/.vim/plugged/vim-colorschemes/colors', '*'), '\n')
-  for i in range(1,len(colorscheme_menu_files)-1)
-    let scheme_name = fnamemodify(fnamemodify(colorscheme_menu_files[i], ":r"), ":t")
-    exec 'menu Plugin.Colorschemes.' . scheme_name . ' :colorscheme ' . scheme_name . '<CR>'
-  endfor
-endfunction
-" SetupColorschemesMenu }}}
-" ClangFormat {{{
-let g:format_cpp_clang_style = get(g:, 'format_cpp_clang_style', 'file')
-
-function! FormatCppClang()
-  let filepath = expand("%")
-  call FormatCppClangFile(filepath)
-endfunction
-
-function! FormatCppClangFile(filepath)
-  let cli_args =
-        \ [
-        \ '-fallback-style=none',
-        \ '-style='.g:format_cpp_clang_style
-        \ ]
-
-  if exists('format_cpp_clang_filename')
-    if g:format_cpp_clang_filename != ''
-      call add(cli_args, '-assume-filename='.g:format_cpp_clang_filename)
-    endif
-  endif
-
-  let args_list = join(cli_args, ' ')
-  let cmd = '% ! clang-format ' . args_list
-
-  normal ma
-  exec cmd
-  normal 'a
-endfunction
-" ClangFormat }}}
