@@ -15,7 +15,9 @@ Plug 'vim-scripts/YankRing.vim'
 Plug 'tpope/vim-surround'
 Plug 'tpope/vim-fugitive'
 Plug 'mileszs/ack.vim'
-Plug 'SirVer/ultisnips'
+if !(has('macunix') && !has('gui'))
+  Plug 'SirVer/ultisnips'
+end
 Plug 'PProvost/vim-ps1'
 
 if !has('win32')
@@ -33,6 +35,7 @@ Plug 'majutsushi/tagbar'
 Plug 'nightsense/carbonized'
 Plug 'leafgarland/typescript-vim'
 Plug 'briancollins/vim-jst'
+Plug 'vim-scripts/mips.vim'
 
 call plug#end()
 
@@ -214,7 +217,10 @@ let g:format_cpp_clang_style = get(g:, 'format_cpp_clang_style', 'file')
 
 function! FormatCppClang()
   let filepath = expand("%")
+  let curline = line(".")
+  " echo curline
   call FormatCppClangFile(filepath)
+  cursor(curline, 0)
 endfunction
 
 function! FormatCppClangFile(filepath)
@@ -237,6 +243,9 @@ function! FormatCppClangFile(filepath)
   exec cmd
   normal 'a
 endfunction
+
+command! ClangFormat call FormatCppClang()
+noremap <F6> :ClangFormat<CR>
 " ClangFormat }}}
 
 " Shims
@@ -325,6 +334,7 @@ nmap <LocalLeader>b /(<CR>malvh%hxi<CR><Esc>==O<C-r>"<Esc>==`a%kA,<Esc>`avi(:s/,
 " vimgrep for word under cursor
 nmap <LocalLeader>g viwy:call AckForSelection()<CR>
 vmap <LocalLeader>g :call AckForSelection()<CR>
+vmap <LocalLeader>q :!par -jw60<CR>
 
 " perl align
 if has('win32')
@@ -348,34 +358,13 @@ vnoremap < <gv
 nnoremap <C-e> j<C-e>
 nnoremap <C-y> k<C-y>
 " enhancements }}}
-" alt_keys {{{
-"
-" IMPORTANT: depends on win32_utf8_shim
-"
-" ALT-c copy
-" ALT-v paste
-" ALT-s save
-" ALT-w close
-" ALT-w quit
-" ...and more...
-
-nnoremap <M-a> ggVG
-vnoremap <M-c> "+y
-vnoremap <M-x> "+x
-nnoremap <M-v> "+p
-nnoremap <M-V> "+P
-inoremap <M-v> <C-r>"
-inoremap <M-q> :qa!<CR>
-
-" save
-nnoremap <M-s> :wa<CR>
-
-" close
-nnoremap <M-w> :BD<CR>
-" alt_keys }}}
 " plugins {{{
 nmap <LocalLeader>t :TagbarToggle<CR>
 nmap <LocalLeader>n :NERDTreeToggle<CR>
+
+" ALE
+nmap <C-k> :ALEPrevious<CR>
+nmap <C-j> :ALENext<CR>
 
 " custom
 nmap <LocalLeader>w :call ToggleWrap()<CR>
@@ -388,9 +377,6 @@ nmap <Leader>js :call logger#word()<CR>
 nmap <Leader>jv :call logger#line()<CR>
 nmap <Leader>jc :call GetClosure()<CR>
 
-nmap <F5> :GoInstall<CR>
-vmap <F5> :GoInstall<CR>
-imap <F5> :GoInstall<CR>
 " plugins }}}
 
 " My Settings
@@ -510,7 +496,27 @@ set complete-=i
 
 " }}}
 " C++ include paths {{{
-set path+=/usr/include/linux,/usr/include/c++/v1,/usr/include/libcxxabi,/usr/local/include
+"
+" Set these in project specific .vimrc files
+"
+" for example:
+"
+"     let some_dir = "/opt/include"
+"     exec "set path+=".some_dir
+"
+" For Ubuntu CLang stdlib headers
+" - /usr/include/c++/v1
+" - /usr/include/libcxxabi
+"
+" On MacOS for homebrew
+" - /usr/local/include
+"
+" UNIX system headers
+" - /usr/local/linux
+"
+" Visual Studio Windows Headers
+" - C:\Program Files (x86)\Windows Kits\10\Include\VERSION_NUMBER\um
+"
 " C++ include paths }}}
 
 " Standard Plugin Settings
@@ -523,6 +529,7 @@ let loaded_matchparen = 1
 " NERDTree {{{
 " prevent annoying warnings from nerdtree
 let g:NERDShutUp = 1
+let g:NERDTreeIgnore = ['\~$', '.pyc', '__pycache__', '.DS_Store']
 " }}}
 " ALE {{{
 let g:ale_lint_on_text_changed = 'never'
@@ -534,7 +541,9 @@ let g:ale_linters = {'c': ['clang'], 'cpp': ['clang'], 'go': ['gofmt', 'go vet',
 let g:ale_cpp_clang_options = '-std=c++14'
 " ale }}}
 " Ack {{{
-if executable('ag')
+if executable('rg')
+  let g:ackprg = 'rg --vimgrep'
+elseif executable('ag')
   let g:ackprg = 'ag --vimgrep'
 endif
 " }}}
