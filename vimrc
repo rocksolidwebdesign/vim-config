@@ -538,7 +538,7 @@ let g:ale_lint_on_insert_leave = 0
 " ['go build', 'gofmt', 'golint', 'gometalinter', 'gosimple', 'go vet', 'staticcheck']
 let g:ale_linters = {'c': ['clang'], 'cpp': ['clang'], 'go': ['gofmt', 'go vet', 'go build']}
 
-let g:ale_cpp_clang_options = '-std=c++14'
+let g:ale_cpp_clang_options = '-std=c++17'
 " ale }}}
 " Ack {{{
 if executable('rg')
@@ -564,6 +564,9 @@ let g:yankring_max_display        = 50
 " }}}
 
 " Filetype Plugin Settings
+" assembly {{{
+" autocmd FileType asm set ft=mips
+" assembly }}}
 " clang_complete {{{
 
 " from github README:
