@@ -36,6 +36,7 @@ Plug 'nightsense/carbonized'
 Plug 'leafgarland/typescript-vim'
 Plug 'briancollins/vim-jst'
 Plug 'vim-scripts/mips.vim'
+Plug 'tikhomirov/vim-glsl'
 
 call plug#end()
 
