@@ -567,11 +567,11 @@ let g:yankring_max_display        = 50
 " clang_complete {{{
 
 " from github README:
-"	path to directory where library can be found
-"	let g:clang_library_path='/usr/lib/llvm-3.8/lib'
+" path to directory where library can be found
+" let g:clang_library_path='/usr/lib/llvm-3.8/lib'
 "
-"	or path directly to the library file
-"	let g:clang_library_path='/usr/lib64/libclang.so.3.8'
+" or path directly to the library file
+" let g:clang_library_path='/usr/lib64/libclang.so.3.8'
 
 " ubuntu
 let g:clang_auto_select = 1
