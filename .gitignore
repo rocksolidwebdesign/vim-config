@@ -1,3 +1,4 @@
 plugged/*
 !plugged/.gitkeep
 .netrwhist
+*yankring*
